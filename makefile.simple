@@ -1,0 +1,5 @@
+hello_mppa_mp:  hello_mppa_mp.c
+
+CC=kvx-cos-gcc
+CXX=kvx-cos-g++
+CFLAGS=-fopenmp

@@ -1,0 +1,13 @@
+#use-module = strict-flags
+
+lflags=-fopenmp -Wl,--defsym=MPPA_COS_NB_CC=1 -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4 -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0
+cflags=-fopenmp -Wl,--defsym=MPPA_COS_NB_CC=1 -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4 -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0
+
+system:=cos
+
+
+# for mmpa
+hello_mppa_mp-srcs := hello_mppa_mp.c
+cluster-bin += hello_mppa_mp
+
+include $(KALRAY_TOOLCHAIN_DIR)/share/make/Makefile.kalray
