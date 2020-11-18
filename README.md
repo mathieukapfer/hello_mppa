@@ -62,7 +62,7 @@ Thread   3 is running on CPU   2 - (index:9)
 ## test on mppa
 
 ### source
-```
+```C
 #include <sched.h>
 
 #include <stdio.h>
