@@ -66,7 +66,7 @@ Thread   3 is running on CPU   2 - (index:9)
   - Source the environment files: `source KAF_applications/kEnv/kvxtools/opt/kalray/accesscore/kalray.sh`
 
 ### source
-```
+```C
 #include <sched.h>
 
 #include <stdio.h>
