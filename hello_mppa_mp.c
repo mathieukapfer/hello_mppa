@@ -1,3 +1,4 @@
+
 #include <sched.h>
 
 #include <stdio.h>
@@ -7,7 +8,7 @@
 int main(void)
 {
 
-  omp_set_num_threads(8);
+  omp_set_num_threads(16);
 
   // example of parallel (execute this line on all cpu)
 #pragma omp parallel
@@ -15,7 +16,7 @@ int main(void)
 
   // example of parallel inside loop (dispatch index on all cpu
 #pragma omp parallel for
-  for (int index=0; index<10; index++)
+  for (int index=0; index<16; index++)
     {
       printf("Thread %3d is running on CPU %3d - (index:%d)\n",
              mppa_cos_get_cluster_id(),

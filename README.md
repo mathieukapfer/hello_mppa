@@ -61,6 +61,10 @@ Thread   3 is running on CPU   2 - (index:9)
 
 ## test on mppa
 
+### install & source Kalray toolkit
+  - Get the ACE (AccessCore for Embedded application):`git:software/applications/KAF_applications `
+  - Source the environment files: `source KAF_applications/kEnv/kvxtools/opt/kalray/accesscore/kalray.sh`
+
 ### source
 ```
 #include <sched.h>
@@ -72,7 +76,7 @@ Thread   3 is running on CPU   2 - (index:9)
 int main(void)
 {
 
-  omp_set_num_threads(8);
+  omp_set_num_threads(4);
 
   // example of parallel (execute this line on all cpu)
 #pragma omp parallel
@@ -91,7 +95,7 @@ int main(void)
   return 0;
 }
 
-    ```
+```
 ### compile
 
 ```
@@ -101,8 +105,67 @@ kvx-cos-gcc -fopenmp    hello_mppa_mp.c   -o hello_mppa_mp
 
 ### execution
 ```
-$ kvx-cluster --  output/bin/hello_mppa_mp
-mkapfer@coolup25:/work1/mkapfer/Projects/hello$ kvx-cluster --  output/bin/hello_mppa_mp
+$ kvx-cluster -- hello_mppa_mp
+hello
+hello
+hello
+hello
+Thread   0 is running on CPU   1 - (index:3)
+Thread   0 is running on CPU   0 - (index:0)
+Thread   0 is running on CPU   2 - (index:6)
+Thread   0 is running on CPU   1 - (index:4)
+Thread   0 is running on CPU   2 - (index:7)
+Thread   0 is running on CPU   1 - (index:5)
+Thread   0 is running on CPU   0 - (index:1)
+Thread   0 is running on CPU   3 - (index:8)
+Thread   0 is running on CPU   0 - (index:2)
+Thread   0 is running on CPU   3 - (index:9)
+```
+
+### execution with profiling log
+The option `--profile` generate dir tree with all asm instructions exectuted by cluster and PE of cluster
+```
+$ kvx-cluster --profile -- hello_mppa_mp
+...
+mkapfer@coolup25:/work1/mkapfer/Projects/hello$ tree profile/
+profile/
+├── Cluster_0
+│   ├── PE.0
+│   ├── PE.1
+│   ├── PE.2
+│   ├── PE.3
+│   └── RM.16
+├── Cluster_1
+├── Cluster_2
+├── Cluster_3
+└── Cluster_4
+
+
+```
+
+### execution on more than 4 PE (Process Element)
+if you replace the line  `omp_set_num_threads(4);` by  `omp_set_num_threads(8);` and try to compile and execute the `hello_mppa_mp` example, you probably got this :
+
+```
+$ kvx-cluster -- hello_mppa_mp
+
+libgomp: Thread creation failed: No more processes
+```
+
+You have reached the max threads on the default config, but not the max threads of each MPPA cluster which is 15 !. To fix this default configuration, add `--defsym=MPPA_COS_NB_CORES_LOG2=4` flag for the linker like this:
+
+```
+CFLAGS=-fopenmp -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4
+```
+
+Then after build and execution you got the execution on 8 PE ;0)
+(the max PE is 16 per cluster)
+
+```
+$ rm hello_mppa_mp && make -f makefile.simple hello_mppa_mp
+kvx-cos-gcc -fopenmp -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4    hello_mppa_mp.c   -o hello_mppa_mp
+
+$ kvx-cluster -- hello_mppa_mp
 hello
 hello
 hello
@@ -121,34 +184,14 @@ Thread   0 is running on CPU   5 - (index:7)
 Thread   0 is running on CPU   0 - (index:1)
 Thread   0 is running on CPU   1 - (index:3)
 Thread   0 is running on CPU   7 - (index:9)
-
-```
-
-### execution with profiling log
-The option `--profile` generate dir tree with all asm instructions exectuted by cluster and PE of cluster
-```
-$ kvx-cluster --profile --  output/bin/hello_mppa_mp
-...
-mkapfer@coolup25:/work1/mkapfer/Projects/hello$ tree profile/
-profile/
-├── Cluster_0
-│   ├── PE.0
-│   ├── PE.1
-│   ├── PE.2
-│   ├── PE.3
-│   └── RM.16
-├── Cluster_1
-├── Cluster_2
-├── Cluster_3
-└── Cluster_4
-
+mkapfer@coolup25:~/Projects/hello$
 
 ```
 
 
 ### compile with 'kalray' style makefile
 
-Thanks to makefile above ...
+Thanks to makefile below that include `Makefile.kalray` from toolchain:
 ```makefile
 lflags=-fopenmp -Wl,--defsym=MPPA_COS_NB_CC=1 -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4 -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0
 cflags=-fopenmp -Wl,--defsym=MPPA_COS_NB_CC=1 -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4 -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0
@@ -161,9 +204,16 @@ cluster-bin += hello_mppa_mp
 include $(KALRAY_TOOLCHAIN_DIR)/share/make/Makefile.kalray
 ```
 
-type the command below
+type the command below:
 ```
 make -f makefile.my_kalray all
   KVX_COS_CC		output/build/hello_mppa_mp_build/hello_mppa_mp.c.o
   KVX_COS_LD		output/bin/hello_mppa_mp
+```
+
+and execute with command below
+(NOTE: location of binaries have change now to `output/bin`)
+```
+$ kvx-cluster --  output/bin/hello_mppa_mp
+$ kvx-cluster --profile --  output/bin/hello_mppa_mp
 ```
