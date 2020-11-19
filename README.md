@@ -163,14 +163,15 @@ $ kvx-cluster -- hello_mppa_mp
 libgomp: Thread creation failed: No more processes
 ```
 
-You have reached the max threads on the default config, but not the max threads of each MPPA cluster which is 15 !. To fix this default configuration, add `--defsym=MPPA_COS_NB_CORES_LOG2=4` flag for the linker like this:
+You have reached the max number of PE in the default config, but not the max PE of each MPPA cluster which is 16 !. To fix this default configuration, add `--defsym=MPPA_COS_NB_CORES_LOG2=4` flag to the linker like this:
 
 ```
 CFLAGS=-fopenmp -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4
 ```
+NOTE: The meaning of `...LOG2=4` value is that the max number of PE will be 1 << 4 or 2^4 
 
-Then after build and execution you got the execution on 8 PE ;0)
-(the max PE is 16 per cluster)
+
+Then after build and execution you got the execution on 8 PE as limited `by omp_set_num_threads(8);`
 
 ```
 $ rm hello_mppa_mp && make -f makefile.simple hello_mppa_mp
