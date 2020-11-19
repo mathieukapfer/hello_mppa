@@ -1,1 +1,2 @@
 CFLAGS=-fopenmp
+CXXFLAGS=-fopenmp

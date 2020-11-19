@@ -98,8 +98,19 @@ int main(void)
 ```
 ### compile
 
+Thanks to following makefile:
+
+```makefile
+CC=kvx-cos-gcc
+CXX=kvx-cos-g++
+CFLAGS=-fopenmp
+CXXFLAGS=-fopenmp
 ```
-make -f makefile.simple hello_mppa_mp
+
+compile with:
+
+```
+$ make -f makefile.simple hello_mppa_mp
 kvx-cos-gcc -fopenmp    hello_mppa_mp.c   -o hello_mppa_mp
 ```
 

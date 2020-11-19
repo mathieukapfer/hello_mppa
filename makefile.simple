@@ -3,3 +3,4 @@ hello_mppa_mp:  hello_mppa_mp.c
 CC=kvx-cos-gcc
 CXX=kvx-cos-g++
 CFLAGS=-fopenmp -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4
+CXXFLAGS=-fopenmp -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4
