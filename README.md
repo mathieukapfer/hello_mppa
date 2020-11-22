@@ -1,5 +1,7 @@
 # Hello mppa with `openmp`
 
+TODO: Fix mppa example (replace CPU per Cluster:%d, PE:%d)
+
 ## Test on host x86
 ### code
 ```C hello_lp.c
