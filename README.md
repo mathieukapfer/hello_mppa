@@ -1,4 +1,4 @@
-# Hello mppa with `openmp`
+# Hello mppa - part I - `openmp`
 
 TODO: Fix mppa example (replace CPU per Cluster:%d, PE:%d)
 
