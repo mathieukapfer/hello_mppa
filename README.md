@@ -4,7 +4,8 @@ TODO: Fix mppa example (replace CPU per Cluster:%d, PE:%d)
 
 ## Test on host x86
 ### code
-```C hello_lp.c
+
+```C
 /*
  * Example of open mp - *host* example
  * compile with: make hello_mp
