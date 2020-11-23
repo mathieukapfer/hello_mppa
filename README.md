@@ -241,3 +241,11 @@ $ kvx-cluster --  output/bin/hello_mppa_mp
 $ kvx-cluster --profile --  output/bin/hello_mppa_mp
 ```
 NOTE: location of binaries have change now to `output/bin`
+
+
+# Hello mppa - part II - `opencl`
+
+## clinfo
+Need a little setup to make clinfo detect the MPPA target:
+
+    LD_PRELOAD=$KALRAY_TOOLCHAIN_DIR/lib/libOpenCL.so clinfo
