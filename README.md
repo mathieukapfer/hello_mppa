@@ -6,7 +6,7 @@
 TODO: Fix mppa example (replace CPU per Cluster:%d, PE:%d)
 
 ## Test on host x86
-### code
+### file: hello_mp.c
 
 ```c
 /*
@@ -46,13 +46,13 @@ CFLAGS=-fopenmp
 CXXFLAGS=-fopenmp
 ```
 compile with
-```
+```shell
 $ make hello_mp
 cc -fopenmp    hello_mp.c   -o hello_mp
 ```
 ### execution
 
-```
+```shell
 $ ./hello_mp
 hello
 hello
@@ -74,14 +74,16 @@ Thread   3 is running on CPU   2 - (index:9)
 
 ### Install toolchain
   - Get the ACE (AccessCore for Embedded application):
+
   `git:software/applications/KAF_applications `
 
 ### Source environment
   - Source the environment files:
+
     `source KAF_applications/kEnv/kvxtools/opt/kalray/accesscore/kalray.sh`
 
 ### code
-```C
+```c
 #include <sched.h>
 
 #include <stdio.h>
@@ -126,13 +128,13 @@ CXXFLAGS=-fopenmp
 
 compile with:
 
-```
+```shell
 $ make -f makefile.simple hello_mppa_mp
 kvx-cos-gcc -fopenmp    hello_mppa_mp.c   -o hello_mppa_mp
 ```
 
 ### execution (on simulator)
-```
+```shell
 $ kvx-cluster -- hello_mppa_mp
 hello
 hello
@@ -150,9 +152,9 @@ Thread   0 is running on CPU   0 - (index:2)
 Thread   0 is running on CPU   3 - (index:9)
 ```
 
-### execution with profiling log (on simulator)
+### execution with `profile` log (on simulator)
 The option `--profile` generate dir tree with all asm instructions exectuted by cluster and PE of cluster
-```
+```shell
 $ kvx-cluster --profile -- hello_mppa_mp
 ...
 mkapfer@coolup25:/work1/mkapfer/Projects/hello$ tree profile/
@@ -174,7 +176,7 @@ profile/
 ### execution on more than 4 PE (Process Element)
 if you replace the line  `omp_set_num_threads(4);` by  `omp_set_num_threads(8);` and try to compile and execute the `hello_mppa_mp` example, you probably got this :
 
-```
+```shell
 $ kvx-cluster -- hello_mppa_mp
 
 libgomp: Thread creation failed: No more processes
@@ -182,7 +184,7 @@ libgomp: Thread creation failed: No more processes
 
 You have reached the max number of PE in the default config, but not the max PE of each MPPA cluster which is 16 !. To fix this default configuration, add `--defsym=MPPA_COS_NB_CORES_LOG2=4` flag to the linker like this:
 
-```
+```makefile
 CFLAGS=-fopenmp -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4
 ```
 NOTE: The meaning of `...LOG2=4` value is that the max number of PE is `1 << 4` (2 power of 4) that is equal to 16.
@@ -190,7 +192,7 @@ NOTE: The meaning of `...LOG2=4` value is that the max number of PE is `1 << 4` 
 
 Then after build and execution you got the execution on 8 PE as limited `by omp_set_num_threads(8);` (but you can go now until 16)
 
-```
+```shell
 $ rm hello_mppa_mp && make -f makefile.simple hello_mppa_mp
 kvx-cos-gcc -fopenmp -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4    hello_mppa_mp.c   -o hello_mppa_mp
 
@@ -232,14 +234,14 @@ include $(KALRAY_TOOLCHAIN_DIR)/share/make/Makefile.kalray
 ```
 
 type the command:
-```
+```shell
 $ make -f makefile.my_kalray all
   KVX_COS_CC		output/build/hello_mppa_mp_build/hello_mppa_mp.c.o
   KVX_COS_LD		output/bin/hello_mppa_mp
 ```
 
 and execute with:
-```
+```shell
 $ kvx-cluster --  output/bin/hello_mppa_mp
 $ kvx-cluster --profile --  output/bin/hello_mppa_mp
 ```
