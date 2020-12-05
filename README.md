@@ -1,3 +1,7 @@
+
+1. The generated Toc will be an ordered list
+{:toc}
+
 # Hello mppa - part I - `openmp`
 
 TODO: Fix mppa example (replace CPU per Cluster:%d, PE:%d)
