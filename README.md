@@ -75,7 +75,7 @@ Thread   3 is running on CPU   2 - (index:9)
 ### Install toolchain
   - Get the ACE (AccessCore for Embedded application):
 
-  `git:software/applications/KAF_applications `
+    `git:software/applications/KAF_applications `
 
 ### Source environment
   - Source the environment files:
@@ -221,7 +221,7 @@ Thread   0 is running on CPU   7 - (index:9)
 ### compile with 'kalray' style makefile
 
 Thanks to makefile below that include `Makefile.kalray` from toolchain:
-```Makefile
+```makefile
 lflags=-fopenmp -Wl,--defsym=MPPA_COS_NB_CC=1 -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4 -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0
 cflags=-fopenmp -Wl,--defsym=MPPA_COS_NB_CC=1 -Wl,--defsym=MPPA_COS_NB_CORES_LOG2=4 -Wl,--defsym=MPPA_COS_THREAD_PER_CORE_LOG2=0
 
