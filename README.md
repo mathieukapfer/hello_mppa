@@ -82,7 +82,7 @@ Thread   3 is running on CPU   2 - (index:9)
 
     `source KAF_applications/kEnv/kvxtools/opt/kalray/accesscore/kalray.sh`
 
-### code
+### file: hello_mppa_mp.c
 ```c
 #include <sched.h>
 
