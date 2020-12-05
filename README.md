@@ -1,3 +1,6 @@
+1. The generated Toc will be an ordered list
+{:toc}
+
 # Hello mppa - part I - `openmp`
 
 TODO: Fix mppa example (replace CPU per Cluster:%d, PE:%d)
@@ -5,7 +8,7 @@ TODO: Fix mppa example (replace CPU per Cluster:%d, PE:%d)
 ## Test on host x86
 ### code
 
-```C
+```c
 /*
  * Example of open mp - *host* example
  * compile with: make hello_mp
@@ -38,7 +41,7 @@ int main(void)
 
 ### compile
 Thanks to this makefile:
-```makfile
+```makefile
 CFLAGS=-fopenmp
 CXXFLAGS=-fopenmp
 ```
