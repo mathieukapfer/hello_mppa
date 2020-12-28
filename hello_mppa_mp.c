@@ -18,7 +18,10 @@ int main(void)
 #pragma omp parallel for
   for (int index=0; index<16; index++)
     {
-      printf("Thread %3d is running on CPU %3d - (index:%d)\n",
+      int thread_num = omp_get_thread_num();
+
+      printf("Thread %-3d is running on MPPA cluster:%3d, PE:%d - (index:%d)\n",
+             thread_num,
              mppa_cos_get_cluster_id(),
              mppa_cos_get_pe_id(),
              index);

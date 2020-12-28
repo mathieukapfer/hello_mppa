@@ -9,8 +9,8 @@ system:=cos
 
 # for mmpa
 hello_mppa_mp-srcs := hello_mppa_mp.c
-hello_mppa_mp_vector-srcs := hello_mppa_mp_vector.cpp
+hello_vector-srcs := hello_vector.cpp
 
-cluster-bin += hello_mppa_mp hello_mppa_mp_vector
+cluster-bin += hello_mppa_mp hello_vector
 
 include $(KALRAY_TOOLCHAIN_DIR)/share/make/Makefile.kalray

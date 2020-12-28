@@ -3,8 +3,6 @@
 
 # Hello mppa - part I - `openmp`
 
-TODO: Fix mppa example (replace CPU per Cluster:%d, PE:%d)
-
 ## Test on host x86
 ### file: hello_mp.c
 
@@ -72,15 +70,23 @@ Thread   3 is running on CPU   2 - (index:9)
 
 ## Test on mppa
 
-### Install toolchain
-  - Get the ACE (AccessCore for Embedded application):
+### Install toolchain [internal only]
 
-    `git:software/applications/KAF_applications `
+Get the ACE (AccessCore for Embedded application):
+
+    `git:software/applications/KAF_libraries `
+
+Checkout the release you want
 
 ### Source environment
-  - Source the environment files:
 
-    `source KAF_applications/kEnv/kvxtools/opt/kalray/accesscore/kalray.sh`
+In `KAF_libraries` directories,
+
+  - do once (or when you change KAF_LIBRARIES version)
+      `./get_packages.sh && cd -`
+
+  - do on each session:
+      `source kEnv/kvxtools/.switch_env`
 
 ### file: hello_mppa_mp.c
 ```c
@@ -103,11 +109,14 @@ int main(void)
 
   // Usage of 'parallel for': dispatch index on all cpus
 #pragma omp parallel for
-  for (int index=0; index<10; index++)
+  for (int index=0; index<16; index++)
     {
-      printf("Thread %3d is running on CPU %3d - (index:%d)\n",
-             mppa_cos_get_cluster_id(), // get which cluster is used
-             mppa_cos_get_pe_id(),      // get which PE is running
+      int thread_num = omp_get_thread_num();
+
+      printf("Thread %-3d is running on MPPA cluster:%3d, PE:%d - (index:%d)\n",
+             thread_num,
+             mppa_cos_get_cluster_id(),
+             mppa_cos_get_pe_id(),
              index);
     }
 
@@ -133,7 +142,7 @@ $ make -f makefile.simple hello_mppa_mp
 kvx-cos-gcc -fopenmp    hello_mppa_mp.c   -o hello_mppa_mp
 ```
 
-### execution (on simulator)
+### execution on simulator
 ```shell
 $ kvx-cluster -- hello_mppa_mp
 hello
@@ -152,7 +161,7 @@ Thread   0 is running on CPU   0 - (index:2)
 Thread   0 is running on CPU   3 - (index:9)
 ```
 
-### execution with `profile` log (on simulator)
+### execution on simulator with `profile` log
 The option `--profile` generate dir tree with all asm instructions exectuted by cluster and PE of cluster
 ```shell
 $ kvx-cluster --profile -- hello_mppa_mp
@@ -173,7 +182,7 @@ profile/
 
 ```
 
-### execution on more than 4 PE (Process Element)
+### execution on simulator - more than 4 PE (Process Element)
 if you replace the line  `omp_set_num_threads(4);` by  `omp_set_num_threads(8);` and try to compile and execute the `hello_mppa_mp` example, you probably got this :
 
 ```shell
@@ -247,6 +256,46 @@ $ kvx-cluster --profile --  output/bin/hello_mppa_mp
 ```
 NOTE: location of binaries have change now to `output/bin`
 
+### execution on target
+
+`$ kvx-jtag-runner --exec-file=cluster0:output/bin/hello_mppa_mp`
+
+
+```
+(kvxtools) mkapfer@coolup04:/work1/mkapfer/hello_mppa$ kvx-jtag-runner --exec-file=cluster0:output/bin/hello_mppa_mp
+Cluster0@0.0: PE 12: hello
+Cluster0@0.0: PE 1: hello
+Cluster0@0.0: PE 11: hello
+Cluster0@0.0: PE 15: hello
+Cluster0@0.0: PE 7: hello
+Cluster0@0.0: PE 0: hello
+Cluster0@0.0: PE 3: hello
+Cluster0@0.0: PE 2: hello
+Cluster0@0.0: PE 9: hello
+Cluster0@0.0: PE 10: hello
+Cluster0@0.0: PE 4: hello
+Cluster0@0.0: PE 13: hello
+Cluster0@0.0: PE 8: hello
+Cluster0@0.0: PE 5: hello
+Cluster0@0.0: PE 6: hello
+Cluster0@0.0: PE 14: hello
+Cluster0@0.0: PE 5: Thread 5   is running on MPPA cluster:  0, PE:5 - (index:5)
+Cluster0@0.0: PE 9: Thread 9   is running on MPPA cluster:  0, PE:9 - (index:9)
+Cluster0@0.0: PE 13: Thread 13  is running on MPPA cluster:  0, PE:13 - (index:13)
+Cluster0@0.0: PE 0: Thread 0   is running on MPPA cluster:  0, PE:0 - (index:0)
+Cluster0@0.0: PE 14: Thread 14  is running on MPPA cluster:  0, PE:14 - (index:14)
+Cluster0@0.0: PE 15: Thread 15  is running on MPPA cluster:  0, PE:15 - (index:15)
+Cluster0@0.0: PE 3: Thread 3   is running on MPPA cluster:  0, PE:3 - (index:3)
+Cluster0@0.0: PE 8: Thread 8   is running on MPPA cluster:  0, PE:8 - (index:8)
+Cluster0@0.0: PE 4: Thread 4   is running on MPPA cluster:  0, PE:4 - (index:4)
+Cluster0@0.0: PE 6: Thread 6   is running on MPPA cluster:  0, PE:6 - (index:6)
+Cluster0@0.0: PE 12: Thread 12  is running on MPPA cluster:  0, PE:12 - (index:12)
+Cluster0@0.0: PE 10: Thread 10  is running on MPPA cluster:  0, PE:10 - (index:10)
+Cluster0@0.0: PE 11: Thread 11  is running on MPPA cluster:  0, PE:11 - (index:11)
+Cluster0@0.0: PE 1: Thread 1   is running on MPPA cluster:  0, PE:1 - (index:1)
+Cluster0@0.0: PE 2: Thread 2   is running on MPPA cluster:  0, PE:2 - (index:2)
+Cluster0@0.0: PE 7: Thread 7   is running on MPPA cluster:  0, PE:7 - (index:7)
+```
 
 # Hello mppa - part II - `opencl`
 
