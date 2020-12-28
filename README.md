@@ -302,4 +302,129 @@ Cluster0@0.0: PE 7: Thread 7   is running on MPPA cluster:  0, PE:7 - (index:7)
 ## clinfo
 Need a little setup to make clinfo detect the MPPA target:
 
-    LD_PRELOAD=$KALRAY_TOOLCHAIN_DIR/lib/libOpenCL.so clinfo
+    $ LD_PRELOAD=$KALRAY_TOOLCHAIN_DIR/lib/libOpenCL.so clinfo
+
+
+```
+(kvxtools) mkapfer@coolup04:/work1/mkapfer/hello_mppa$   LD_PRELOAD=$KALRAY_TOOLCHAIN_DIR/lib/libOpenCL.so clinfo
+Number of platforms                               1
+  Platform Name                                   Portable Computing Language
+  Platform Vendor                                 The pocl project
+  Platform Version                                OpenCL 1.2
+  Platform Profile                                EMBEDDED_PROFILE
+  Platform Extensions
+
+  Platform Name                                   Portable Computing Language
+Number of devices                                 1
+  Device Name                                     MPPA Coolidge
+  Device Vendor                                   KALRAY Corporation
+  Device Vendor ID                                0x0
+  Device Version                                  OpenCL 1.2
+  Driver Version                                  MPPA OpenCL Driver 1.0
+  Device OpenCL C Version                         OpenCL C 1.2
+  Device Type                                     Accelerator
+  Device Profile                                  EMBEDDED_PROFILE
+  Device Available                                Yes
+  Compiler Available                              Yes
+  Linker Available                                Yes
+  Max compute units                               5
+  Max clock frequency                             1000MHz
+  Device Partition                                (core)
+    Max number of sub-devices                     5
+    Supported partition types                     equally, by counts, None, None, by <unknown> (0x100000000)
+  Max work item dimensions                        3
+  Max work item sizes                             16x16x16
+  Max work group size                             16
+  ...
+```
+
+
+## first sample of code
+
+We use the sample of code: [opencl-sample1.cpp](opencl-sample1.cpp)
+
+For opencl beginner, have a look at
+[this](http://mksoft.fr/wiki/doku.php?id=code-parallel:open-cl&s[]=opencl)
+
+### compile with mppa opencl backend
+
+Source the mppa environment, then use the following minimal makefile below
+```
+CFLAGS   += -isystem $(KALRAY_TOOLCHAIN_DIR)/include
+CXXFLAGS += -isystem $(KALRAY_TOOLCHAIN_DIR)/include
+LDFLAGS  += -L$(KALRAY_TOOLCHAIN_DIR)/lib -lOpenCL
+```
+
+### execute on host
+
+```
+(kvxtools) $ ./opencl-sample1
+Using platform: Portable Computing Language
+Using device: MPPA Coolidge
+ result:
+0 2 4 3 5 7 6 8 10 9
+```
+
+### execute on host with MPPA POCL log enable
+
+```
+(kvxtools) mkapfer@coolup04:/work1/mkapfer/hello_mppa$ POCL_DEBUG=1 ./opencl-sample1
+Using platform: Portable Computing Language
+[2020-11-28 15:23:39.714182855]POCL: in fn pocl_mppa_init_device at line 136:
+  |   GENERAL |  Platform(s) constructor proceed
+[2020-11-28 15:23:41.200970277]POCL: in fn pocl_mppa_init_device at line 154:
+  |   GENERAL |  Platform(s) booted
+Using device: MPPA Coolidge
+[2020-11-28 15:23:41.204993045]POCL: in fn compile_and_link_program at line 660:
+  |   GENERAL |  building from sources for device 0
+[2020-11-28 15:23:41.297313613]POCL: in fn compile_and_link_program at line 660:
+  |   GENERAL |  building from sources for device 0
+[2020-11-28 15:23:41.386616623]POCL: in fn POclCreateCommandQueue at line 42:
+  |   GENERAL |  Create Command queue on device 0
+[2020-11-28 15:23:41.386668811]POCL: in fn pocl_mppa_write at line 28:
+  |   GENERAL |  Writing 40 bytes to device address (nil), offset 0 from src_host_ptr 0x7fff52339600
+[2020-11-28 15:23:41.386758699]POCL: in fn pocl_mppa_write at line 28:
+  |   GENERAL |  Writing 40 bytes to device address (nil), offset 0 from src_host_ptr 0x7fff52339630
+[2020-11-28 15:23:41.405389986]POCL: in fn pocl_mppa_compile_kernel at line 59:
+  |   GENERAL |  Final compilation: clang --target=kvx-unknown-cos -g -fPIC -ffunction-sections -O2  -c /nfs/home/mkapfer/.cache/pocl/kcache/ON/DBHEJJBOJMCDOLPMGPDCGONPKNPEHAAKJHPGB/program_final.bc -o /nfs/home/mkapfer/.cache/pocl/kcache/ON/DBHEJJBOJMCDOLPMGPDCGONPKNPEHAAKJHPGB/program_final.bc.o
+[2020-11-28 15:23:41.484102054]POCL: in fn pocl_mppa_compile_kernel at line 59:
+  |   GENERAL |  Final compilation: clang --target=kvx-unknown-cos -g -fPIC -ffunction-sections -O2  -c /nfs/home/mkapfer/.cache/pocl/kcache/ON/DBHEJJBOJMCDOLPMGPDCGONPKNPEHAAKJHPGB/program_final_spmd.bc -o /nfs/home/mkapfer/.cache/pocl/kcache/ON/DBHEJJBOJMCDOLPMGPDCGONPKNPEHAAKJHPGB/program_final_spmd.bc.o
+[2020-11-28 15:23:41.521160088]POCL: in fn pocl_mppa_compile_kernel at line 92:
+  |   GENERAL |  Final link: kvx-cos-gcc -fPIC /nfs/home/mkapfer/.cache/pocl/kcache/ON/DBHEJJBOJMCDOLPMGPDCGONPKNPEHAAKJHPGB/program_final.bc.o /nfs/home/mkapfer/.cache/pocl/kcache/ON/DBHEJJBOJMCDOLPMGPDCGONPKNPEHAAKJHPGB/program_final_spmd.bc.o -shared -o /nfs/home/mkapfer/.cache/pocl/kcache/ON/DBHEJJBOJMCDOLPMGPDCGONPKNPEHAAKJHPGB/program_final.bc.so -Wl,--soname=/nfs/home/mkapfer/.cache/pocl/kcache/ON/DBHEJJBOJMCDOLPMGPDCGONPKNPEHAAKJHPGB/program_final.bc.so -Wl,--wrap=malloc -Wl,--wrap=calloc -Wl,--wrap=realloc -Wl,--wrap=free -Wl,--wrap=memalign -Wl,--wrap=pthread_create -nostdlib   -lgcc -Wl,--defsym=_KVX_DIVMOD_ZERO_RETURN_ZERO=1
+[2020-11-28 15:23:41.532971932]POCL: in fn pocl_binary_serialize at line 632:
+  |   GENERAL |  serializing program.so: /nfs/home/mkapfer/.cache/pocl/kcache/ON/DBHEJJBOJMCDOLPMGPDCGONPKNPEHAAKJHPGB/program_final.bc.so
+[2020-11-28 15:23:41.533841657]POCL: in fn pocl_binary_serialize at line 652:
+  |   GENERAL |  serializing program.bc: /nfs/home/mkapfer/.cache/pocl/kcache/ON/DBHEJJBOJMCDOLPMGPDCGONPKNPEHAAKJHPGB/program.bc
+[2020-11-28 15:23:41.533868598]POCL: in fn pocl_binary_serialize at line 657:
+  |   GENERAL |  serializing program_spmd.bc: /nfs/home/mkapfer/.cache/pocl/kcache/ON/DBHEJJBOJMCDOLPMGPDCGONPKNPEHAAKJHPGB/program_spmd.bc
+[2020-11-28 15:23:41.533891420]POCL: in fn serialize_kernel_cachedir at line 359:
+  |   GENERAL |  Kernel simple_add: recur serializing cachedir /nfs/home/mkapfer/.cache/pocl/kcache/ON/DBHEJJBOJMCDOLPMGPDCGONPKNPEHAAKJHPGB/simple_add
+[2020-11-28 15:23:41.538995078]POCL: in fn POclSetKernelArg at line 73:
+  |   GENERAL |  Kernel      simple_add || SetArg idx   0 ||     int* || Local 0 || Size      8 || Value 0x7fff523395c0 || *Value 0x5632cc0fbfc0 || *(uint32*)Value:        0
+[2020-11-28 15:23:41.539014003]POCL: in fn POclSetKernelArg at line 73:
+  |   GENERAL |  Kernel      simple_add || SetArg idx   1 ||     int* || Local 0 || Size      8 || Value 0x7fff523395c0 || *Value 0x5632cc049fb0 || *(uint32*)Value:        0
+[2020-11-28 15:23:41.539025274]POCL: in fn POclSetKernelArg at line 73:
+  |   GENERAL |  Kernel      simple_add || SetArg idx   2 ||     int* || Local 0 || Size      8 || Value 0x7fff523395c0 || *Value 0x5632cc03fe90 || *(uint32*)Value:        0
+[2020-11-28 15:23:41.539036465]POCL: in fn POclEnqueueNDRangeKernel at line 240:
+  |   GENERAL |  Preferred WG size multiple 1
+[2020-11-28 15:23:41.539046013]POCL: in fn POclEnqueueNDRangeKernel at line 456:
+  |   GENERAL |  Queueing kernel simple_add with local size 10 x 1 x 1 group sizes 1 x 1 x 1...
+[2020-11-28 15:23:41.539093091]POCL: in fn pocl_mppa_run at line 410:
+  |   GENERAL |  Setting args 0 with pointer 0x910030a80
+[2020-11-28 15:23:41.539114852]POCL: in fn pocl_mppa_run at line 410:
+  |   GENERAL |  Setting args 1 with pointer 0x910030b00
+[2020-11-28 15:23:41.539130942]POCL: in fn pocl_mppa_run at line 410:
+  |   GENERAL |  Setting args 2 with pointer 0x910030b80
+[2020-11-28 15:23:41.539141912]POCL: in fn mppa_start_kernel at line 337:
+  |   GENERAL |  Sending command to start ndrange kernel, wg: 1 x 1 x 1, wi: 10 x 1 x 1
+[2020-11-28 15:23:41.539406948]POCL: in fn mppa_start_kernel at line 359:
+  |   GENERAL |  Kernel simple_add started successfully
+[2020-11-28 15:23:41.539448986]POCL: in fn pocl_mppa_read at line 12:
+  |   GENERAL |  Reading 40 bytes from device address (nil), offset 0 to dst_host_ptr 0x7fff52339660
+ result:
+[2020-11-28 15:23:41.543080473]POCL: in fn pocl_mppa_final_device at line 242:
+  |   GENERAL |  Platform destructor proceed
+[2020-11-28 15:23:41.544322213]POCL: in fn pocl_mppa_final_device at line 245:
+  |   GENERAL |  Platform destroyed
+0 2 4 3 5 7 6 8 10 9 (kvxtools) mkapfer@coolup04:/work1/mkapfer/hello_mppa$
+```
