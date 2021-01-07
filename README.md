@@ -5,6 +5,9 @@ https://mathieukapfer.github.io/hello_mppa/
 
 # Hello mppa - part I - `openmp`
 
+For openmp beginner, have a look at
+[this](http://mksoft.fr/wiki/doku.php?id=code-parallel:open-mp)
+
 ## Test on host x86
 ### file: hello_mp.c
 
@@ -301,6 +304,9 @@ Cluster0@0.0: PE 7: Thread 7   is running on MPPA cluster:  0, PE:7 - (index:7)
 
 # Hello mppa - part II - `opencl`
 
+For opencl beginner, have a look at
+[this](http://mksoft.fr/wiki/doku.php?id=code-parallel:open-cl&s[]=opencl)
+
 ## clinfo
 Need a little setup to make clinfo detect the MPPA target:
 
@@ -344,9 +350,6 @@ Number of devices                                 1
 ## first sample of code
 
 We use the sample of code: [opencl-sample1.cpp](opencl-sample1.cpp)
-
-For opencl beginner, have a look at
-[this](http://mksoft.fr/wiki/doku.php?id=code-parallel:open-cl&s[]=opencl)
 
 ### compile with mppa opencl backend
 
