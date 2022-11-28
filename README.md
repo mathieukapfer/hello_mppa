@@ -433,3 +433,25 @@ Using device: MPPA Coolidge
   |   GENERAL |  Platform destroyed
 0 2 4 3 5 7 6 8 10 9 (kvxtools) mkapfer@coolup04:/work1/mkapfer/hello_mppa$
 ```
+
+
+## Second sample of code
+
+We use the sample of code: [opencl-sample2.cpp](opencl-sample2.cpp) in order to:
+ - build from kernel source as neested string (as sample1)
+ - build from kernel source as external file - on line
+ - build from kernel source as external file - off line
+
+### select how to managed kernel code
+
+You can select how to managed kernel code:
+ - FromBinary: comment all line below
+ - FromSource with cl file: uncomment first 'define' only
+ - FromSource nested here:  uncomment both define
+
+// #define CL_PRG_FROM_SOURCES
+// #define CL_PRG_FROM_STRING
+
+### compile and run
+
+    make -f makefile.my_kalray_open_cl && POCL_DEBUG=1 ./output/bin/opencl_sample2

@@ -1,0 +1,28 @@
+arch := kv3-1
+cluster-system := cos
+use-module := strict-flags opencl-kernel
+
+#opencl_common_cflags := -DCL_TARGET_OPENCL_VERSION=200 -DCL_USE_DEPRECATED_OPENCL_1_2_APIS -DCL_HPP_TARGET_OPENCL_VERSION=200
+#cflags += $(opencl_common_cflags)
+#cppflags += $(opencl_common_cflags)
+
+
+CFLAGS   += -isystem $(KALRAY_TOOLCHAIN_DIR)/include
+CXXFLAGS += -isystem $(KALRAY_TOOLCHAIN_DIR)/include
+LDFLAGS  += -L$(KALRAY_TOOLCHAIN_DIR)/lib -lOpenCL
+
+
+# MPPA OpenCL pocl kernel
+opencl_sample2_kernel-name := opencl-sample2.cl.pocl
+opencl_sample2_kernel-srcs := opencl-sample2.cl
+opencl-kernel-bin += opencl_sample2_kernel
+
+# Host acceleration binary
+opencl_sample2-cflags:=$(CFLAGS)
+opencl_sample2-lflags:=$(LDFLAGS)
+opencl_sample2-srcs := opencl-sample2.cpp
+opencl_sample2-cppflags := -std=c++11 -g
+opencl_sample2-deps := opencl_sample2_kernel # bin
+host-bin += opencl_sample2
+
+include $(KALRAY_TOOLCHAIN_DIR)/share/make/Makefile.kalray
