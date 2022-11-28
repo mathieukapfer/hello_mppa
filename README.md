@@ -435,14 +435,7 @@ Using device: MPPA Coolidge
 ```
 
 
-## Second sample of code
-
-The code [opencl-sample2.cpp](opencl-sample2.cpp) show how to 
- - build from kernel source as neested string (as sample1)
- - build from kernel source as external file - on line
- - build from kernel source as external file - off line
-
-### select how to managed kernel code
+## select how to managed kernel code
 
 Open the source file [opencl-sample2.cpp](opencl-sample2.cpp), and select how to managed kernel code:
  - FromBinary: comment both 'define' line below
