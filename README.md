@@ -454,3 +454,15 @@ Open the source file [opencl-sample2.cpp](opencl-sample2.cpp), and select how to
 ```
     make -f makefile.my_kalray_open_cl && POCL_DEBUG=1 ./output/bin/opencl_sample2
 ```
+## opencl disptach: how to link opencl kernel with a C/C++ library
+
+The program is made up of
+ - main: [opencl-sample3.cpp](opencl-sample3.cpp),
+ - kernel code: [opencl-sample3.cl](opencl-sample3.cl)
+ - c/C++ library: [sample3_kernel.cpp](sample3_kernel.cpp)
+
+### compile and run
+
+```
+make -f makefile.my_kalray_open_cl_dispatch && ./output/bin/opencl_sample3
+```
