@@ -466,3 +466,17 @@ The program is made up of
 ```
 make -f makefile.my_kalray_open_cl_dispatch && ./output/bin/opencl_sample3
 ```
+
+## opencl disptach & out of order
+
+This is axample of out of order queue that allow the host to push buffer asynchronously to the target:
+
+ - main: [opencl-sample4.cpp](opencl-sample4.cpp),
+ - kernel code: [opencl-sample4.cl](opencl-sample4.cl)
+ - c/C++ library: [sample4_kernel.cpp](sample4_kernel.cpp)
+
+### compile and run
+
+```
+make -f makefile.my_kalray_open_cl_dispatch_out_of_order && ./output/bin/opencl_sample4
+```

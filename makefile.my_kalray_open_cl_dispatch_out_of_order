@@ -1,0 +1,31 @@
+
+arch := kv3-1
+cluster-system := cos
+use-module := strict-flags opencl-kernel
+
+CFLAGS   += -isystem $(KALRAY_TOOLCHAIN_DIR)/include
+CXXFLAGS += -isystem $(KALRAY_TOOLCHAIN_DIR)/include
+LDFLAGS  += -L$(KALRAY_TOOLCHAIN_DIR)/lib -lOpenCL
+
+# MPPA cluster kernel lib
+sample4_kernel_lib-name := sample4_kernel
+sample4_kernel_lib-srcs := sample4_kernel.cpp
+sample4_kernel_lib-cppflags := -std=c++11 -g -fopenmp -fPIC -lmppacos -lmppal2
+cluster-lib += sample4_kernel_lib
+
+# MPPA OpenCL pocl kernel
+opencl_sample4_kernel-name := opencl-sample4.cl.pocl
+opencl_sample4_kernel-srcs := opencl-sample4.cl
+opencl_sample4_kernel-cl-lflags := -lsample4_kernel
+opencl_sample4_kernel-deps := sample4_kernel_lib
+opencl-kernel-bin += opencl_sample4_kernel
+
+# Host acceleration binary
+opencl_sample4-cflags:=$(CFLAGS)
+opencl_sample4-lflags:=$(LDFLAGS)
+opencl_sample4-srcs := opencl-sample4.cpp
+opencl_sample4-cppflags := -std=c++11 -g
+opencl_sample4-deps := opencl_sample4_kernel # bin
+host-bin += opencl_sample4
+
+include $(KALRAY_TOOLCHAIN_DIR)/share/make/Makefile.kalray
