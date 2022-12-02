@@ -5,10 +5,14 @@
 #include <omp.h>
 #include <mppa_cos.h>
 
-int main(void)
+int main(int argc, char **argv)
 {
 
-  omp_set_num_threads(16);
+  int nb_threads=4;
+  if (argc>1)
+    nb_threads = atoi(argv[1]);
+
+  omp_set_num_threads(nb_threads);
 
   // example of parallel (execute this line on all cpu)
 #pragma omp parallel

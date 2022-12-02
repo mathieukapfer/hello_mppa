@@ -2,9 +2,13 @@
 #define CL_TARGET_OPENCL_VERSION 120
 //#define USE_KERNEL_FUNCTOR
 
+#define CL_HPP_MINIMUM_OPENCL_VERSION 120
+#define CL_HPP_TARGET_OPENCL_VERSION 120
+#define CL_HPP_ENABLE_PROGRAM_CONSTRUCTION_FROM_ARRAY_COMPATIBILITY
+
 #include <iostream>
-#include <CL/cl.hpp>
-//#include <CL/cl2.hpp>
+//#include <CL/cl.hpp>
+#include <CL/cl2.hpp>
 
 int main(){
     //get all platforms (drivers)

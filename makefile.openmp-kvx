@@ -1,0 +1,4 @@
+CFLAGS=-fopenmp
+CXXFLAGS=-fopenmp
+CC=kvx-cos-gcc
+CXX=kvx-cos-g++
