@@ -6,11 +6,9 @@ https://mathieukapfer.github.io/hello_mppa/
 
 # Helper
 
-All command below is written in main `makefile`
-This "default" makefile carry an helper menu !
+All commands present in this memo are also written in file `makefile` that include also an index of available code examples
 To get it, just type `make`:
 
-It will produce the following output with the list of available target and related description
 ```
 $ make
 
