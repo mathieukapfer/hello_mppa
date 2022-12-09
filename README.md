@@ -6,7 +6,8 @@ https://mathieukapfer.github.io/hello_mppa/
 
 # Helper
 
-All commands present in this memo are also written in file `makefile` that include also an index of available code examples
+All commands present in this memo are also written in file `makefile` that include also an index of available code examples. 
+
 To get it, just type `make`:
 
 ```
