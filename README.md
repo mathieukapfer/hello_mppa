@@ -3,6 +3,36 @@ https://mathieukapfer.github.io/hello_mppa/
 1. The generated Toc will be an ordered list
 {:toc}
 
+
+# Helper
+
+All command below is written in main `makefile`
+This "default" makefile carry an helper menu !
+To get it, just type `make`:
+
+It will produce the following output with the list of available target and related description
+```
+$ make
+
+ Example of:
+
+ Openmp example:
+  - openmp-x86:    openmp x86
+  - openmp-kvx:    openmp on mppa simulator (4 PE)
+  - openmp-kvx-16: openmp on mppa simulator (16 PE)
+  - openmp-kalray: same as above with Kalray makefile
+
+ Opencl example:
+  - opencl-1:      opencl with kernel code as nested string in code
+  - opencl-2:      opencl with kernel in dedicated file (offline and online compilation)
+  - opencl-3:      opencl with kernel using C/C++ native library
+  - opencl-4:      opencl and out of order mode
+  - opencl-5:      opencl and separate queue for code and data
+```
+
+To compile an example, just type `make` with the selected target as parameter!
+
+
 # Hello mppa - part I - `openmp`
 
 For openmp beginner, have a look at
@@ -50,7 +80,7 @@ CXXFLAGS=-fopenmp
 ```
 compile with
 ```shell
-$ make hello_mp
+$ make -f makefile.openmp hello_mp
 cc -fopenmp    hello_mp.c   -o hello_mp
 ```
 ### execution
@@ -140,7 +170,7 @@ CFLAGS=-fopenmp
 CXXFLAGS=-fopenmp
 ```
 
-compile with:
+compile with for 4 PE (default mode)
 
 ```shell
 $ make -f makefile.simple hello_mppa_mp
@@ -249,7 +279,7 @@ include $(KALRAY_TOOLCHAIN_DIR)/share/make/Makefile.kalray
 
 type the command:
 ```shell
-$ make -f makefile.my_kalray all
+$ make -f makefile.my_kalray hello_mppa_mp
   KVX_COS_CC		output/build/hello_mppa_mp_build/hello_mppa_mp.c.o
   KVX_COS_LD		output/bin/hello_mppa_mp
 ```
@@ -359,6 +389,10 @@ CFLAGS   += -isystem $(KALRAY_TOOLCHAIN_DIR)/include
 CXXFLAGS += -isystem $(KALRAY_TOOLCHAIN_DIR)/include
 LDFLAGS  += -L$(KALRAY_TOOLCHAIN_DIR)/lib -lOpenCL
 ```
+or ready to use makefile below:
+```
+make -f makefile.opencl opencl-sample1
+```
 
 ### execute on host
 
@@ -452,7 +486,7 @@ Open the source file [opencl-sample2.cpp](opencl-sample2.cpp), and select how to
 ### compile and run
 
 ```
-    make -f makefile.my_kalray_open_cl && POCL_DEBUG=1 ./output/bin/opencl_sample2
+make -f makefile.my_kalray_open_cl && POCL_DEBUG=1 ./output/bin/opencl_sample2
 ```
 ## opencl disptach: how to link opencl kernel with a C/C++ library
 
@@ -464,7 +498,7 @@ The program is made up of
 ### compile and run
 
 ```
-make -f makefile.my_kalray_open_cl_dispatch && ./output/bin/opencl_sample3
+TEST_NAME=sample4 KERNEL_NAME=sample4 make -f makefile.my_kalray_open_cl_dispatch && ./output/bin/opencl_sample4
 ```
 
 ## opencl disptach & out of order
@@ -479,4 +513,19 @@ This is axample of out of order queue that allow the host to push buffer asynchr
 
 ```
 make -f makefile.my_kalray_open_cl_dispatch_out_of_order && ./output/bin/opencl_sample4
+```
+
+
+## opencl disptach & 2 messages queues
+
+Instead of previous 'out of order' mode, this example show how to use two queues to allow the host to push set of data and one command separatly:
+
+ - main: [opencl-sample5.cpp](opencl-sample5.cpp),
+ - kernel code: [opencl-sample4.cl](opencl-sample4.cl)
+ - C/C++ library: [sample4_kernel.cpp](sample4_kernel.cpp)
+
+### compile and run
+
+```
+TEST_NAME=sample5 KERNEL_NAME=sample4 make -f makefile.my_kalray_open_cl_dispatch && ./output/bin/opencl_sample5
 ```
