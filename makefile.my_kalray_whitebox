@@ -1,0 +1,43 @@
+# Makefile to play with opencl running C/C++ native library
+# - main:          opencl_<TEST_NAME>.cpp
+# - kernel code:   opencl_<KERNEL_NAME.cl>
+# - C/C++ library: <KERNEL_NAME>_kernel.cpp
+
+
+# Source selection
+TEST_NAME=sample6
+KERNEL_NAME=sample4
+
+# mppa & toolchain configuration
+arch := kv3-1
+cluster-system := cos
+use-module := strict-flags opencl-kernel
+
+# common flags
+CFLAGS   += -isystem $(KALRAY_TOOLCHAIN_DIR)/include
+CXXFLAGS += -isystem $(KALRAY_TOOLCHAIN_DIR)/include
+LDFLAGS  += -L$(KALRAY_TOOLCHAIN_DIR)/lib -lOpenCL \
+	           $(shell pkg-config --libs kaf-service-opencl-whitebox)
+
+# MPPA cluster kernel lib
+kernel_lib-name := $(KERNEL_NAME)_kernel
+kernel_lib-srcs := $(KERNEL_NAME)_kernel.cpp
+kernel_lib-cppflags := -std=c++11 -g -fopenmp -fPIC
+cluster-lib += kernel_lib
+
+# MPPA OpenCL pocl kernel (Wrapper)
+opencl_kernel-name := opencl-$(KERNEL_NAME).cl.pocl
+opencl_kernel-srcs := opencl-$(KERNEL_NAME).cl
+opencl_kernel-cl-lflags := -l$(KERNEL_NAME)_kernel
+opencl_kernel-deps := kernel_lib
+opencl-kernel-bin += opencl_kernel
+
+# Host acceleration binary
+opencl_$(TEST_NAME)-cflags:=$(CFLAGS)
+opencl_$(TEST_NAME)-lflags:=$(LDFLAGS)
+opencl_$(TEST_NAME)-srcs := opencl-$(TEST_NAME).cpp
+opencl_$(TEST_NAME)-cppflags := -std=c++11 -g
+opencl_$(TEST_NAME)-deps := opencl_kernel # bin
+host-bin += opencl_$(TEST_NAME)
+
+include $(KALRAY_TOOLCHAIN_DIR)/share/make/Makefile.kalray

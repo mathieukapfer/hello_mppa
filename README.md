@@ -528,3 +528,17 @@ Instead of previous 'out of order' mode, this example show how to use two queues
 ```
 TEST_NAME=sample5 KERNEL_NAME=sample4 make -f makefile.my_kalray_open_cl_dispatch && ./output/bin/opencl_sample5
 ```
+
+## Kalray Applicaton Framework (KAF)
+
+By using the KAF library, we can reduce the opencl initialisation code
+
+ - main: [opencl-sample6.cpp](opencl-sample6.cpp),
+ - kernel code: [opencl-sample4.cl](opencl-sample4.cl)
+ - C/C++ library: [sample4_kernel.cpp](sample4_kernel.cpp)
+
+### compile and run
+
+```
+make -f makefile.my_kalray_whitebox clean all && ./output/bin/opencl_sample6
+```
