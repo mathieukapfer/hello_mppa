@@ -5,8 +5,8 @@
 
 
 # Source selection
-TEST_NAME=sample6
-KERNEL_NAME=sample4
+#TEST_NAME=sample6
+#KERNEL_NAME=sample4
 
 # mppa & toolchain configuration
 arch := kv3-1
