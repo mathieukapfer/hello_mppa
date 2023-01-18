@@ -1,0 +1,2 @@
+#define TABLE_SIZE 100
+#define VECTOR_SIZE 8

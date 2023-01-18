@@ -18,11 +18,12 @@ CFLAGS   += -isystem $(KALRAY_TOOLCHAIN_DIR)/include
 CXXFLAGS += -isystem $(KALRAY_TOOLCHAIN_DIR)/include
 LDFLAGS  += -L$(KALRAY_TOOLCHAIN_DIR)/lib -lOpenCL \
 	           $(shell pkg-config --libs kaf-service-opencl-whitebox)
+OPTIM_FLAGS := -O3 -Wall -Wextra  -save-temps
 
 # MPPA cluster kernel lib
 kernel_lib-name := $(KERNEL_NAME)_kernel
 kernel_lib-srcs := $(KERNEL_NAME)_kernel.cpp
-kernel_lib-cppflags := -std=c++11 -g -fopenmp -fPIC
+kernel_lib-cppflags := -std=c++11 -g -fopenmp -fPIC $(OPTIM_FLAGS)
 cluster-lib += kernel_lib
 
 # MPPA OpenCL pocl kernel (Wrapper)

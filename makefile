@@ -17,6 +17,8 @@ help:
 	@echo "  - opencl-6:      opencl whitebox"
 	@echo "  - opencl-7:      opencl whitebox with profiling"
 	@echo "  - opencl-7-stv:  opencl whitebox with profiling & trace viewer"
+	@echo "  - opencl-8:      opencl whitebox with profiling with vectorization"
+	@echo "  - opencl-8-stv:  opencl whitebox with profiling with vectorization & trace viewer"
 
 
 openmp-x86:
@@ -70,3 +72,23 @@ opencl-7-stv:
 	kvx-trace-util -a --keep -- POCL_MPPA_TRACE_ENABLE=1 POCL_TRACING=lttng ./output/bin/opencl_sample7
 	@echo "\nShow trace ..."
 	kvx-stv     -t /lib/firmware/kalray/opencl/ocl_fw_l2_d_1m_trace.elf:Cluster0.DSU.bin
+
+objdump-7:
+	kvx-cos-objdump -D output/build/kernel_lib_build/sample7_kernel.cpp.o -S
+
+opencl-8:
+	@echo "\nCompiling..."
+	TEST_NAME=sample8 KERNEL_NAME=sample8  make -f makefile.my_kalray_whitebox clean all
+	@echo "\nRuning..."
+	./output/bin/opencl_sample8
+
+opencl-8-stv:
+	@echo "\nCompiling..."
+	TEST_NAME=sample8 KERNEL_NAME=sample8  make -f makefile.my_kalray_whitebox clean all
+	@echo "\nRuning..."
+	kvx-trace-util -a --keep -- POCL_MPPA_TRACE_ENABLE=1 POCL_TRACING=lttng ./output/bin/opencl_sample8
+	@echo "\nShow trace ..."
+	kvx-stv     -t /lib/firmware/kalray/opencl/ocl_fw_l2_d_1m_trace.elf:Cluster0.DSU.bin
+
+objdump-8:
+	kvx-cos-objdump -D output/build/kernel_lib_build/sample8_kernel.cpp.o -S
